@@ -1,0 +1,16 @@
+# Ignore Python & Django files
+venv/
+__pycache__/
+db.sqlite3
+*.pyc
+*.log
+.env
+
+# Ignore Node.js & React files
+frontend/node_modules/
+frontend/build/
+frontend/.env
+
+# Ignore system files
+.vscode/
+.DS_Store
