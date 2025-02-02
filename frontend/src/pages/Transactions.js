@@ -15,11 +15,13 @@ const Transactions = () => {
     const [profitLoss, setProfitLoss] = useState(0);
     const printRef = useRef();
 
+    // Fetch transactions, sarees, and raw materials
     const fetchTransactions = async () => {
         try {
             const data = await getTransactions();
             const sareeData = await getSarees();
             const rawMaterialData = await getRawMaterials();
+            
             setTransactions(data);
             setSarees(sareeData);
             setRawMaterials(rawMaterialData);
@@ -56,7 +58,7 @@ const Transactions = () => {
     });
 
     const openEditModal = (transaction) => {
-        setEditTransaction(transaction);
+        setEditTransaction({ ...transaction });
         setShowModal(true);
     };
 
@@ -68,7 +70,7 @@ const Transactions = () => {
     const handleUpdate = async () => {
         try {
             await updateTransaction(editTransaction.id, editTransaction);
-            setShowModal(false);
+            closeModal();
             fetchTransactions();
         } catch (error) {
             console.error("Error updating transaction:", error);
@@ -116,19 +118,27 @@ const Transactions = () => {
                             const sareeItem = transaction.saree ? sarees.find(s => s.id === parseInt(transaction.saree)) : null;
                             const rawMaterialItem = transaction.raw_material ? rawMaterials.find(rm => rm.id === parseInt(transaction.raw_material)) : null;
 
-                            const unitPrice = sareeItem ? sareeItem.price : transaction.raw_material ? transaction.total_price / transaction.quantity : "";
-                            const totalPrice = sareeItem ? transaction.quantity * sareeItem.price : transaction.total_price;
+                            const unitPrice = sareeItem 
+                                ? sareeItem.price 
+                                : transaction.raw_material 
+                                    ? transaction.total_price / transaction.quantity 
+                                    : "";
+
+                            const totalPrice = sareeItem 
+                                ? transaction.quantity * sareeItem.price 
+                                : transaction.total_price;
+
                             const mineAmount = transaction.saree ? totalPrice : "";
                             const suriAmount = transaction.raw_material ? totalPrice : "";
 
                             return (
                                 <tr key={transaction.id}>
-                                    <td>{transaction.date}</td>
-                                    <td>{transaction.saree ? sareeItem?.name || "Saree" : rawMaterialItem?.name || "Amount"}</td>
+                                    <td>{transaction.date || "N/A"}</td>
+                                    <td>{sareeItem?.name || rawMaterialItem?.name || "Amount"}</td>
                                     <td>{transaction.quantity}</td>
-                                    <td>₹{unitPrice}</td>
-                                    <td>₹{mineAmount}</td>
-                                    <td>₹{suriAmount}</td>
+                                    <td>₹{unitPrice.toFixed(2)}</td>
+                                    <td>₹{mineAmount ? mineAmount.toFixed(2) : "-"}</td>
+                                    <td>₹{suriAmount ? suriAmount.toFixed(2) : "-"}</td>
                                     <td>
                                         <button className="btn btn-warning btn-sm me-2" onClick={() => openEditModal(transaction)}>✏️ Edit</button>
                                         <button className="btn btn-danger btn-sm" onClick={() => handleDelete(transaction.id)}>🗑️ Delete</button>
@@ -138,13 +148,13 @@ const Transactions = () => {
                         })}
                         <tr className="table-secondary">
                             <td colSpan="4"><b>Total</b></td>
-                            <td><b>₹{totalMine}</b></td>
-                            <td><b>₹{totalSuri}</b></td>
+                            <td><b>₹{totalMine.toFixed(2)}</b></td>
+                            <td><b>₹{totalSuri.toFixed(2)}</b></td>
                             <td></td>
                         </tr>
                         <tr className={profitLoss >= 0 ? "table-success" : "table-danger"}>
                             <td colSpan="4"><b>Profit/Loss</b></td>
-                            <td colSpan="2"><b>{profitLoss >= 0 ? `Profit: ₹${profitLoss}` : `Loss: ₹${Math.abs(profitLoss)}`}</b></td>
+                            <td colSpan="2"><b>{profitLoss >= 0 ? `Profit: ₹${profitLoss.toFixed(2)}` : `Loss: ₹${Math.abs(profitLoss).toFixed(2)}`}</b></td>
                             <td></td>
                         </tr>
                     </tbody>
@@ -161,17 +171,29 @@ const Transactions = () => {
                         <Form>
                             <Form.Group className="mb-3">
                                 <Form.Label>Date</Form.Label>
-                                <Form.Control type="date" value={editTransaction.date} onChange={(e) => setEditTransaction({ ...editTransaction, date: e.target.value })} />
+                                <Form.Control 
+                                    type="date" 
+                                    value={editTransaction.date} 
+                                    onChange={(e) => setEditTransaction({ ...editTransaction, date: e.target.value })} 
+                                />
                             </Form.Group>
 
                             <Form.Group className="mb-3">
                                 <Form.Label>Quantity</Form.Label>
-                                <Form.Control type="number" value={editTransaction.quantity} onChange={(e) => setEditTransaction({ ...editTransaction, quantity: e.target.value })} />
+                                <Form.Control 
+                                    type="number" 
+                                    value={editTransaction.quantity} 
+                                    onChange={(e) => setEditTransaction({ ...editTransaction, quantity: e.target.value })} 
+                                />
                             </Form.Group>
 
                             <Form.Group className="mb-3">
                                 <Form.Label>Total Price</Form.Label>
-                                <Form.Control type="number" value={editTransaction.total_price} onChange={(e) => setEditTransaction({ ...editTransaction, total_price: e.target.value })} />
+                                <Form.Control 
+                                    type="number" 
+                                    value={editTransaction.total_price} 
+                                    onChange={(e) => setEditTransaction({ ...editTransaction, total_price: e.target.value })} 
+                                />
                             </Form.Group>
 
                             <Button variant="primary" onClick={handleUpdate}>Save Changes</Button>

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // ✅ Define BASE_URL correctly (Use environment variable if available, otherwise fallback)
-const BASE_URL = process.env.REACT_APP_API_URL || "https://saree-backend.onrender.com/api/"; 
+const BASE_URL = "https://saree-backend.onrender.com/api/";
 
 // ✅ Fetch all sarees
 export const getSarees = async () => {
