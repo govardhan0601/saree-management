@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://127.0.0.1:8000/api/';  // Make sure your Django server is running
+const BASE_URL = process.env.REACT_APP_API_URL || "https://saree-backend.onrender.com/api/"; // Make sure your Django server is running
 
 // Fetch all sarees
 export const getSarees = async () => {
-    const response = await axios.get(`${API_BASE_URL}sarees/`);
+    const response = await axios.get(`${BASE_URL}sarees/`);
     return response.data;
 };
 

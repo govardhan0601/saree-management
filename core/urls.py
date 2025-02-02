@@ -8,5 +8,5 @@ router.register(r'raw-materials', RawMaterialViewSet)
 router.register(r'transactions', TransactionViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),  # Include API routes
+    path('api/', include(router.urls)),  # Add "api/" prefix
 ]

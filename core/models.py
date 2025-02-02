@@ -1,12 +1,13 @@
 from django.db import models
 
+from django.db import models
+
 class Saree(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)  # Fixed price
+    name = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
 
-    def __str__(self):
-        return self.name
-
+    class Meta:
+        app_label = "core"  # 🔥 Add This Line If Needed
 class RawMaterial(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
